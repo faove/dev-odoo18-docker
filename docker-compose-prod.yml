@@ -16,7 +16,8 @@ services:
       - PROXY_MODE=True
       - WEB_BASE_URL=https://erpelantar.com
     volumes:
-      - odoo_data:/var/lib/odoo
+      - volumes: 
+        - odoo18-docker_odoo_data:/var/lib/odoo
     labels:
       # Habilita Traefik para este contenedor
       - "traefik.enable=true"
@@ -42,13 +43,13 @@ services:
       - POSTGRES_USER=odoo
       - POSTGRES_PASSWORD=qwerty76%&/
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - odoo18-docker_db_data:/var/lib/postgresql/data
     networks:
       - elantar_net
       
 volumes:
-  db_data:
-  odoo_data:
+  odoo18-docker_db_data:
+  odoo18-docker_odoo_data:
 
 networks:
   elantar_net:
