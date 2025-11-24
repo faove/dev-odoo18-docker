@@ -16,8 +16,7 @@ services:
       - PROXY_MODE=True
       - WEB_BASE_URL=https://erpelantar.com
     volumes:
-      - volumes: 
-        - odoo18-docker_odoo_data:/var/lib/odoo
+      - odoo18-docker_odoo_data:/var/lib/odoo
     labels:
       # Habilita Traefik para este contenedor
       - "traefik.enable=true"
