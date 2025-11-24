@@ -67,16 +67,26 @@ echo ""
 echo "[6/7] Restoring filestore..."
 FILESTORE_SOURCE="$BACKUP_DIR/filestore/elantar_odoo"
 if [ -d "$FILESTORE_SOURCE" ]; then
-    docker cp "$FILESTORE_SOURCE" ${ODOO_CONTAINER}:/var/lib/odoo/filestore/elantar_odoo
+    # Start container temporarily to create directory and copy files
+    docker start $ODOO_CONTAINER
+    sleep 2
+    # Create filestore directory if it doesn't exist
+    docker exec $ODOO_CONTAINER mkdir -p /var/lib/odoo/filestore
+    # Copy filestore content
+    docker cp "$FILESTORE_SOURCE/." ${ODOO_CONTAINER}:/var/lib/odoo/filestore/elantar_odoo/
     echo "✓ Filestore restored"
 else
     echo "⚠ Filestore directory not found in backup"
 fi
 echo ""
 
-# Step 7: Restart Odoo container
+# Step 7: Restart Odoo container (if not already running)
 echo "[7/7] Restarting Odoo container..."
-docker start $ODOO_CONTAINER
+if [ "$(docker ps -q -f name=$ODOO_CONTAINER)" ]; then
+    docker restart $ODOO_CONTAINER
+else
+    docker start $ODOO_CONTAINER
+fi
 echo "✓ Odoo container restarted"
 echo ""
 
