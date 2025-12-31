@@ -10,7 +10,7 @@ fi
 # Variables de configuración
 DB_NAME=${ODOO_DB_NAME:-odoo_elantar_dev}
 SERVICE_NAME="odoo-dev"
-COMPOSE_FILE="docker-compose.local.yml"
+COMPOSE_FILE="docker-compose.yml"
 
 show_help() {
     echo "Uso: ./upgrade-modules.sh [módulos|all]"
