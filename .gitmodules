@@ -1,0 +1,19 @@
+[submodule "oca-addons/web"]
+	path = oca-addons/web
+	url = https://github.com/OCA/web.git
+    branch = 18.0
+#[submodule "oca-addons/server-tools"]
+#    path = oca-addons/server-tools
+#    url = https://github.com/OCA/server-tools.git
+#    branch = 18.0
+#[submodule "oca-addons/reporting-engine"]
+#    path = oca-addons/reporting-engine
+#    url = https://github.com/OCA/reporting-engine.git
+#    branch = 18.0
+[submodule "oca-addons/dms"]
+	path = oca-addons/dms
+	url = https://github.com/OCA/dms.git
+	branch = 18.0
+[submodule "addons/n8n_bridge"]
+	path = addons/n8n_bridge
+	url = https://github.com/ygor-github/n8n_bridge.git

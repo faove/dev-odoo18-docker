@@ -1,4 +1,4 @@
-version: "3.9"
+#version: "3.9"
 
 services:
   odoo-dev:
@@ -7,49 +7,37 @@ services:
     depends_on:
       - db-dev
     ports:
-      - "8070:8069"
+      - "8070:8069" # Odoo será accesible en http://localhost:8070
     environment:
       - HOST=${ODOO_DB_HOST}
       - USER=${ODOO_DB_USER}
       - PASSWORD=${ODOO_DB_PASSWORD}
       - PROXY_MODE=${ODOO_PROXY_MODE}
-      - WEB_BASE_URL=${ODOO_WEB_BASE_URL}
-      - LIST_DB=${ODOO_LIST_DB}
+      - DATABASE=odoo_elantar_dev
+    
     volumes:
       - odoo_data_dev:/var/lib/odoo
       - ./addons:/mnt/extra-addons
       - ./oca-addons/web:/mnt/oca-addons/
+      - ./oca-addons/dms:/mnt/oca-addons/dms
       #- ./enterprise-addons:/mnt/enterprise-addons
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.odoo_dev.rule=Host(`dev.erpelantar.com`)"
-      - "traefik.http.routers.odoo_dev.entrypoints=websecure"
-      - "traefik.http.routers.odoo_dev.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
-      - "traefik.http.services.odoo_dev.loadbalancer.server.port=8069"
-    networks:
-      - elantar_net_dev
+    
     restart: unless-stopped
     command: >
-      --dev all
-      --addons-path=/mnt/extra-addons,/mnt/oca-addons,/usr/lib/python3/dist-packages/odoo/addons
-  
+        --dev all
+        --addons-path=/mnt/extra-addons,/mnt/oca-addons,mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
+
   db-dev:
     image: postgres:15
     container_name: odoo_db_dev
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
+      
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - db_data_dev:/var/lib/postgresql/data
-    networks:
-      - elantar_net_dev
-
+    
 volumes:
   db_data_dev:
   odoo_data_dev:
-
-networks:
-  elantar_net_dev:
-    external: true
