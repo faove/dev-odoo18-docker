@@ -18,7 +18,7 @@ services:
     volumes:
       - odoo_data_dev:/var/lib/odoo
       - ./addons:/mnt/extra-addons
-      - ./oca-addons/web:/mnt/oca-addons/
+      - ./oca-addons:/mnt/oca-addons
       #- ./enterprise-addons:/mnt/enterprise-addons
     labels:
       - "traefik.enable=true"
@@ -31,7 +31,7 @@ services:
     restart: unless-stopped
     command: >
       --dev all
-      --addons-path=/mnt/extra-addons,/mnt/oca-addons,/usr/lib/python3/dist-packages/odoo/addons
+      --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
   
   db-dev:
     image: postgres:15
