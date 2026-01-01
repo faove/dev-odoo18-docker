@@ -14,6 +14,8 @@ services:
       - WEB_BASE_URL=${ODOO_WEB_BASE_URL}
       - LIST_DB=${ODOO_LIST_DB}
       - ADMIN_PASSWD=${ODOO_ADMIN_PASSWORD}
+      - DATABASE=${POSTGRES_DB}
+      - DB_FILTER=^${POSTGRES_DB}$$
     volumes:
       - odoo_data_dev:/var/lib/odoo
       - ./addons:/mnt/extra-addons
@@ -48,6 +50,8 @@ services:
     restart: unless-stopped
     command: >
       --dev all
+      -d ${POSTGRES_DB}
+      --db-filter=^${POSTGRES_DB}$$
       --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
   
   db-dev:
