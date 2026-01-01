@@ -21,7 +21,12 @@ services:
       #- ./enterprise-addons:/mnt/enterprise-addons
     labels:
       - "traefik.enable=true"
-      # Router principal para el sitio general
+      # Router principal para el sitio general (Redirección HTTP a HTTPS)
+      - "traefik.http.routers.odoo_dev_http.rule=Host(`dev.erpelantar.com`)"
+      - "traefik.http.routers.odoo_dev_http.entrypoints=web"
+      - "traefik.http.routers.odoo_dev_http.middlewares=https-redirect"
+      
+      # Router principal HTTPS
       - "traefik.http.routers.odoo_dev.rule=Host(`dev.erpelantar.com`)"
       - "traefik.http.routers.odoo_dev.entrypoints=websecure"
       - "traefik.http.routers.odoo_dev.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
@@ -39,7 +44,7 @@ services:
       # Nota: Los signos $ se duplican para evitar que Docker Compose los interprete como variables
       - "traefik.http.middlewares.odoo-db-auth.basicauth.users=admin:$$apr1$$VeBeF943$$2LZusntSlLp39pWqAzOME/"
     networks:
-      - elantar_net_dev
+      - elantar_net
     restart: unless-stopped
     command: >
       --dev all
@@ -56,12 +61,12 @@ services:
     volumes:
       - db_data_dev:/var/lib/postgresql/data
     networks:
-      - elantar_net_dev
+      - elantar_net
 
 volumes:
   db_data_dev:
   odoo_data_dev:
 
 networks:
-  elantar_net_dev:
+  elantar_net:
     external: true
