@@ -53,8 +53,6 @@ services:
           memory: 512M
     command: >
       odoo
-      # --workers=5
-      # --max-cron-threads=2
       --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
 
   db-dev:
