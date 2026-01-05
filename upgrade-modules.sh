@@ -8,22 +8,23 @@ if [ -f .env ]; then
 fi
 
 # Variables de configuración
-DB_NAME=${ODOO_DB_NAME:-odoo_elantar_dev}
+DB_NAME=${2:-${ODOO_DB_NAME:-odoo_elantar_dev}}
 SERVICE_NAME="odoo-dev"
 COMPOSE_FILE="docker-compose.yml"
 
 show_help() {
-    echo "Uso: ./upgrade-modules.sh [módulos|all]"
+    echo "Uso: ./upgrade-modules.sh [módulos|all] [base_de_datos]"
     echo ""
     echo "Opciones:"
     echo "  all                 Actualiza TODOS los módulos instalados."
     echo "  modulo1,modulo2     Actualiza módulos específicos (separados por coma)."
+    echo "  base_de_datos       Nombre de la base de datos (opcional, por defecto: $DB_NAME)."
     echo "  --help              Muestra esta ayuda."
     echo ""
     echo "Ejemplos:"
     echo "  ./upgrade-modules.sh all"
-    echo "  ./upgrade-modules.sh custom_module"
-    echo "  ./upgrade-modules.sh web,dms"
+    echo "  ./upgrade-modules.sh n8n_bridge restore251229"
+    echo "  ./upgrade-modules.sh web,dms odoo_elantar_dev"
 }
 
 if [ "$1" == "--help" ] || [ -z "$1" ]; then
