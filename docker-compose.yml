@@ -57,7 +57,8 @@ services:
     restart: unless-stopped
     command: >
       odoo
-      --dev all
+      --workers=5
+      --max-cron-threads=2
       --database=${POSTGRES_DB}
       --db-filter=^${POSTGRES_DB}$$
       --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
