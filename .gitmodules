@@ -17,3 +17,4 @@
 [submodule "addons/n8n_bridge"]
 	path = addons/n8n_bridge
 	url = https://github.com/ygor-github/n8n_bridge.git
+	branch = feature/per-channel-webhook-config
