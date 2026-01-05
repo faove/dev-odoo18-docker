@@ -27,10 +27,12 @@ services:
       # --- Regla para HTTP (redirección) ---
       - "traefik.http.routers.odoo-dev-http.entrypoints=web"
       - "traefik.http.routers.odoo-dev-http.rule=Host(`dev.erpelantar.com`)"
-      - "traefik.http.routers.odoo-dev-http.middlewares=https-redirect"
+      - "traefik.http.routers.odoo-dev-http.middlewares=odoo-dev-redirect"
+      - "traefik.http.middlewares.odoo-dev-redirect.redirectscheme.scheme=https"
       # --- Regla para HTTPS ---
       - "traefik.http.routers.odoo-dev-https.entrypoints=websecure"
       - "traefik.http.routers.odoo-dev-https.rule=Host(`dev.erpelantar.com`)"
+      - "traefik.http.routers.odoo-dev-https.tls=true"
       - "traefik.http.routers.odoo-dev-https.tls.certresolver=letsencrypt"
       # --- Servicio que apunta a Odoo (HTTP) ---
       - "traefik.http.services.odoo-dev-service.loadbalancer.server.port=8069"
@@ -38,6 +40,7 @@ services:
       # --- Soporte para Websockets (Longpolling) ---
       - "traefik.http.routers.odoo-dev-websocket.entrypoints=websecure"
       - "traefik.http.routers.odoo-dev-websocket.rule=Host(`dev.erpelantar.com`) && (PathPrefix(`/websocket`) || PathPrefix(`/longpolling`))"
+      - "traefik.http.routers.odoo-dev-websocket.tls=true"
       - "traefik.http.routers.odoo-dev-websocket.tls.certresolver=letsencrypt"
       - "traefik.http.services.odoo-dev-websocket-service.loadbalancer.server.port=8072"
 
