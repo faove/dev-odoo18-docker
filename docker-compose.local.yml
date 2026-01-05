@@ -24,6 +24,8 @@ services:
     
     restart: unless-stopped
     command: >
+        --workers=5
+        --max-cron-threads=2
         --addons-path=/mnt/extra-addons,/mnt/oca-addons,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
 
   db-dev:
