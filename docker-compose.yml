@@ -6,28 +6,30 @@ services:
       - db-dev
     ports:
       - "8070:8069"
+
     environment:
       - HOST=${ODOO_DB_HOST}
       - USER=${ODOO_DB_USER}
       - PASSWORD=${ODOO_DB_PASSWORD}
+      - ADMIN_PASSWD=${ODOO_ADMIN_PASSWORD}
       - PROXY_MODE=${ODOO_PROXY_MODE}
       - WEB_BASE_URL=${ODOO_WEB_BASE_URL}
       - LIST_DB=${ODOO_LIST_DB}
-      - ADMIN_PASSWD=${ODOO_ADMIN_PASSWORD}
       - DATABASE=${POSTGRES_DB}
-      - DB_FILTER=^${POSTGRES_DB}$$
+      #- DB_FILTER=^${POSTGRES_DB}$$
     volumes:
       - odoo_data_dev:/var/lib/odoo
       - ./addons:/mnt/extra-addons
       - ./oca-addons:/mnt/oca-addons
       #- ./enterprise-addons:/mnt/enterprise-addons
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
     labels:
       - "traefik.enable=true"
       # Router principal para el sitio general (Redirección HTTP a HTTPS)
       - "traefik.http.routers.odoo_elantar_dev_http.rule=Host(`dev.erpelantar.com`)"
       - "traefik.http.routers.odoo_elantar_dev_http.entrypoints=web"
       - "traefik.http.routers.odoo_elantar_dev_http.middlewares=https-redirect@docker"
-      
+
       # Router principal HTTPS
       - "traefik.http.routers.odoo_elantar_dev.rule=Host(`dev.erpelantar.com`)"
       - "traefik.http.routers.odoo_elantar_dev.entrypoints=websecure"
@@ -35,10 +37,10 @@ services:
       - "traefik.http.routers.odoo_elantar_dev.tls=true"
       - "traefik.http.routers.odoo_elantar_dev.priority=1"
       - "traefik.http.services.odoo_dev.loadbalancer.server.port=8069"
-      
+
       # Middleware de Redirección HTTP a HTTPS
       - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-      
+
       # Router de seguridad para gestión de bases de datos
       - "traefik.http.routers.odoo_elantar_db_secure.rule=Host(`dev.erpelantar.com`) && (PathPrefix(`/web/database/manager`) || PathPrefix(`/web/database/selector`))"
       - "traefik.http.routers.odoo_elantar_db_secure.entrypoints=websecure"
@@ -46,7 +48,7 @@ services:
       - "traefik.http.routers.odoo_elantar_db_secure.tls=true"
       - "traefik.http.routers.odoo_elantar_db_secure.middlewares=odoo-db-auth@docker"
       - "traefik.http.routers.odoo_elantar_db_secure.priority=100"
-      
+
       # Middleware de Autenticación Básica (admin:i67f-xz5v-7i73)
       # Nota: Los signos $ se duplican para evitar que Docker Compose los interprete como variables
       - "traefik.http.middlewares.odoo-db-auth.basicauth.users=admin:$$apr1$$VeBeF943$$2LZusntSlLp39pWqAzOME/"
@@ -54,11 +56,12 @@ services:
       - elantar_net
     restart: unless-stopped
     command: >
+      odoo
       --dev all
-      -d ${POSTGRES_DB}
+      --database=${POSTGRES_DB}
       --db-filter=^${POSTGRES_DB}$$
       --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
-  
+
   db-dev:
     image: postgres:15
     container_name: odoo_db_dev
