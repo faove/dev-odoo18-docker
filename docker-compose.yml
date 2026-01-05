@@ -48,7 +48,7 @@ services:
 
 
     networks:
-      - elantar_net_dev
+      - elantar_net
     deploy:
       resources:
         limits:
@@ -79,12 +79,12 @@ services:
     volumes:
       - db_data_dev:/var/lib/postgresql/data
     networks:
-      - elantar_net_dev
+      - elantar_net
 
 volumes:
   db_data_dev:
   odoo_data_dev:
 
 networks:
-  elantar_net_dev:
+  elantar_net:
     external: true
