@@ -2,14 +2,15 @@
 
 # Script para limpiar el entorno de Odoo Docker (Local)
 
-# Cargar variables de entorno
+# Cargar variables de entorno (preferir las finales si hay duplicados)
 if [ -f .env ]; then
     export $(grep -E '^[a-zA-Z0-9_]+=' .env | xargs)
 fi
 
-DB_NAME=${ODOO_DB_NAME:-odoo_elantar_dev}
+# Intentar obtener POSTGRES_DB si no está en las variables cargadas
+DB_NAME=${POSTGRES_DB:-odoo_elantar_dev}
 DB_SERVICE="db-dev"
-COMPOSE_FILE="docker-compose.local.yml"
+COMPOSE_FILE="docker-compose.yml"
 
 show_help() {
     echo "Uso: ./reset-environment.sh [soft|hard]"
@@ -31,9 +32,15 @@ fi
 case "$1" in
     soft)
         echo "⚠️  Iniciando SOFT RESET (Borrando base de datos '$DB_NAME')..."
-        docker compose -f $COMPOSE_FILE exec $DB_SERVICE dropdb -U $POSTGRES_USER $DB_NAME --if-exists
-        docker compose -f $COMPOSE_FILE exec $DB_SERVICE createdb -U $POSTGRES_USER $DB_NAME
+        # Forzar el uso del usuario de Postgres correcto
+        PG_PASSWORD=${POSTGRES_PASSWORD:-odoo_pass_123}
+        PG_USER=${POSTGRES_USER:-odoo}
+        
+        docker compose -f $COMPOSE_FILE exec -e PGPASSWORD="$PG_PASSWORD" $DB_SERVICE dropdb -U $PG_USER $DB_NAME --if-exists
+        docker compose -f $COMPOSE_FILE exec -e PGPASSWORD="$PG_PASSWORD" $DB_SERVICE createdb -U $PG_USER $DB_NAME
         echo "✅ Base de datos '$DB_NAME' recreada completamente vacía."
+        echo "♻️ Reiniciando Odoo para asegurar conexión limpia..."
+        docker compose -f $COMPOSE_FILE restart odoo-dev
         ;;
     hard)
         echo "🚨 INICIANDO HARD RESET (BORRADO TOTAL)..."
