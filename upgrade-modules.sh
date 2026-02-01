@@ -145,7 +145,7 @@ echo "🚀 Iniciando actualización de módulos: $MODULES"
 echo "📂 Base de datos: $DB_NAME"
 
 # Comando de actualización de Odoo
-docker compose -f $COMPOSE_FILE exec -u root $SERVICE_NAME sh -c "odoo \
+docker compose -f $COMPOSE_FILE exec -T -u root $SERVICE_NAME sh -c "odoo \
     -u $MODULES \
     -d $DB_NAME \
     --db_host=\$HOST \
