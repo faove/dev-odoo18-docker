@@ -18,3 +18,7 @@
 	path = addons/n8n_bridge
 	url = https://github.com/ygor-github/n8n_bridge.git
 	branch = feature/per-channel-webhook-config
+[submodule "oca-addons/helpdesk"]
+	path = oca-addons/helpdesk
+	url = https://github.com/OCA/helpdesk.git
+	branch = 18.0
