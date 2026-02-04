@@ -1,0 +1,93 @@
+services:
+  odoo-dev:
+    image: odoo:18.0
+    container_name: elantar_odoo_dev
+    depends_on:
+      - db-dev
+
+    environment:
+      - HOST=${ODOO_DB_HOST}
+      - USER=${ODOO_DB_USER}
+      - PASSWORD=${ODOO_DB_PASSWORD}
+      - ADMIN_PASSWD=${ODOO_ADMIN_PASSWORD}
+      - PROXY_MODE=${ODOO_PROXY_MODE}
+      - WEB_BASE_URL=${ODOO_WEB_BASE_URL}
+      - LIST_DB=${ODOO_LIST_DB}
+      - DATABASE=${POSTGRES_DB}
+      - DB_FILTER=^${POSTGRES_DB}$$
+    volumes:
+      - odoo_data_dev:/var/lib/odoo
+      - ./addons:/mnt/extra-addons
+      - ./addons/n8n_bridge:/usr/lib/python3/dist-packages/odoo/addons/n8n_bridge
+      - ./oca-addons:/mnt/oca-addons
+      - ./config/odoo.conf:/etc/odoo/odoo.conf
+    labels:
+      - "traefik.enable=true"
+      
+      # --- Regla para HTTP (redirección) ---
+      - "traefik.http.routers.odoo-dev-http.entrypoints=web"
+      # Agregamos el segundo host aquí
+      - "traefik.http.routers.odoo-dev-http.rule=Host(`dev.erpelantar.com`) || Host(`akp.erpelantar.com`)"
+      - "traefik.http.routers.odoo-dev-http.middlewares=odoo-dev-redirect"
+      - "traefik.http.middlewares.odoo-dev-redirect.redirectscheme.scheme=https"
+
+      # --- Regla para HTTPS ---
+      - "traefik.http.routers.odoo-dev-https.entrypoints=websecure"
+      # Agregamos el segundo host aquí
+      - "traefik.http.routers.odoo-dev-https.rule=Host(`dev.erpelantar.com`) || Host(`akp.erpelantar.com`)"
+      - "traefik.http.routers.odoo-dev-https.tls=true"
+      - "traefik.http.routers.odoo-dev-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.odoo-dev-https.service=odoo-dev-service"
+
+      # --- Soporte para Websockets ---
+      - "traefik.http.routers.odoo-dev-websocket.entrypoints=websecure"
+      # Agregamos el segundo host también a la regla de websocket
+      - "traefik.http.routers.odoo-dev-websocket.rule=(Host(`dev.erpelantar.com`) || Host(`akp.erpelantar.com`)) && (PathPrefix(`/websocket`) || PathPrefix(`/longpolling`))"
+      - "traefik.http.routers.odoo-dev-websocket.tls=true"
+      - "traefik.http.routers.odoo-dev-websocket.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.odoo-dev-websocket.service=odoo-dev-service"
+
+      - "traefik.http.services.odoo-dev-service.loadbalancer.server.port=8069"
+
+    networks:
+      - elantar_net
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4096M
+        reservations:
+          memory: 512M
+    command: >
+      -c /etc/odoo/odoo.conf
+      --max-cron-threads=2
+      --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
+
+  db-dev:
+    image: postgres:15
+    container_name: odoo_db_dev
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2048M
+        reservations:
+          memory: 256M
+    command: ["postgres", "-c", "shared_buffers=512MB", "-c", "work_mem=16MB"]
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+    networks:
+      - elantar_net
+
+volumes:
+  db_data_dev:
+  odoo_data_dev:
+
+networks:
+  elantar_net:
+    external: true

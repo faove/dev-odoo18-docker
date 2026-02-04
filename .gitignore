@@ -1,5 +1,8 @@
 .env
-docker-compose-local.yml
+docker-compose.local.yml
 docker-compose.n8n.yml
 n8n/
 .vscode/
+docker-compose.n8nollama.yml
+docker-compose.n8nia.yml
+ollama/
