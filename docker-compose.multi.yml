@@ -61,7 +61,7 @@ services:
     command: >
       -c /etc/odoo/odoo.conf
       --max-cron-threads=2
-      --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/usr/lib/python3/dist-packages/odoo/addons
+      --addons-path=/mnt/extra-addons,/mnt/oca-addons/web,/mnt/oca-addons/dms,/mnt/oca-addons/helpdesk,/usr/lib/python3/dist-packages/odoo/addons
 
   db-dev:
     image: postgres:15
