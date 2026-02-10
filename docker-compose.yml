@@ -33,14 +33,14 @@ services:
       - "traefik.http.routers.odoo-dev-https.entrypoints=websecure"
       - "traefik.http.routers.odoo-dev-https.rule=Host(`dev.erpelantar.com`)"
       - "traefik.http.routers.odoo-dev-https.tls=true"
-      - "traefik.http.routers.odoo-dev-https.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.odoo-dev-https.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.routers.odoo-dev-https.service=odoo-dev-service"
 
       # --- Soporte para Websockets (Longpolling en 8069 para modo mono-proceso) ---
       - "traefik.http.routers.odoo-dev-websocket.entrypoints=websecure"
       - "traefik.http.routers.odoo-dev-websocket.rule=Host(`dev.erpelantar.com`) && (PathPrefix(`/websocket`) || PathPrefix(`/longpolling`))"
       - "traefik.http.routers.odoo-dev-websocket.tls=true"
-      - "traefik.http.routers.odoo-dev-websocket.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.odoo-dev-websocket.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.routers.odoo-dev-websocket.service=odoo-dev-service"
 
       # --- Servicio único ---
