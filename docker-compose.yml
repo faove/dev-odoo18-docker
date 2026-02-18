@@ -43,7 +43,7 @@ services:
           sleep 2
         done
         echo "Traefik is up! Starting Odoo..."
-        /entrypoint.sh odoo
+        /entrypoint.sh odoo --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/addons,/mnt/extra-addons/oca-addons/web,/mnt/extra-addons/oca-addons/dms,/mnt/extra-addons/oca-addons/helpdesk
   db-dev:
     image: ${DB_IMAGE:-postgres:15}
     container_name: ${DEV_DB_CONTAINER_NAME:-odoo_db_dev}
