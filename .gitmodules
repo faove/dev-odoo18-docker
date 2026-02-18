@@ -1,0 +1,12 @@
+[submodule "oca-addons/web"]
+	path = oca-addons/web
+	url = https://github.com/OCA/web
+	branch = 18.0
+[submodule "oca-addons/dms"]
+	path = oca-addons/dms
+	url = https://github.com/OCA/dms
+	branch = 18.0
+[submodule "oca-addons/helpdesk"]
+	path = oca-addons/helpdesk
+	url = https://github.com/OCA/helpdesk
+	branch = 18.0
