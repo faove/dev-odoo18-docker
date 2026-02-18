@@ -35,28 +35,28 @@ services:
       - "traefik.http.routers.odoo-dev-https.entrypoints=websecure"
       - "traefik.http.routers.odoo-dev-https.rule=Host(`dev.erpelantar.com`)"
       - "traefik.http.routers.odoo-dev-https.tls=true"
-      - "traefik.http.routers.odoo-dev-https.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.odoo-dev-https.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.routers.odoo-dev-https.service=odoo-dev-service"
 
       # --- HTTPS akp.erpelantar.com ---
       - "traefik.http.routers.odoo-akp-https.entrypoints=websecure"
       - "traefik.http.routers.odoo-akp-https.rule=Host(`akp.erpelantar.com`)"
       - "traefik.http.routers.odoo-akp-https.tls=true"
-      - "traefik.http.routers.odoo-akp-https.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.odoo-akp-https.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.routers.odoo-akp-https.service=odoo-dev-service"
 
       # --- Soporte para Websockets dev.erpelantar.com ---
       - "traefik.http.routers.odoo-dev-websocket.entrypoints=websecure"
       - "traefik.http.routers.odoo-dev-websocket.rule=Host(`dev.erpelantar.com`) && (PathPrefix(`/websocket`) || PathPrefix(`/longpolling`))"
       - "traefik.http.routers.odoo-dev-websocket.tls=true"
-      - "traefik.http.routers.odoo-dev-websocket.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.odoo-dev-websocket.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.routers.odoo-dev-websocket.service=odoo-dev-service"
 
       # --- Soporte para Websockets akp.erpelantar.com ---
       - "traefik.http.routers.odoo-akp-websocket.entrypoints=websecure"
       - "traefik.http.routers.odoo-akp-websocket.rule=Host(`akp.erpelantar.com`) && (PathPrefix(`/websocket`) || PathPrefix(`/longpolling`))"
       - "traefik.http.routers.odoo-akp-websocket.tls=true"
-      - "traefik.http.routers.odoo-akp-websocket.tls.certresolver=mytlschallenge"
+      - "traefik.http.routers.odoo-akp-websocket.tls.certresolver=${TRAEFIK_CERT_RESOLVER:-letsencrypt}"
       - "traefik.http.routers.odoo-akp-websocket.service=odoo-dev-service"
 
       - "traefik.http.services.odoo-dev-service.loadbalancer.server.port=8069"
@@ -104,4 +104,3 @@ volumes:
 networks:
   elantar_net:
     external: true
-  
