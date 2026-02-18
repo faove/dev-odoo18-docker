@@ -7,9 +7,9 @@ services:
     ports:
       - "${ODOO_PORT:-8070}:8069"
     environment:
-      - HOST=${DB_HOST}
-      - USER=${DB_USER}
-      - PASSWORD=${DB_PASSWORD}
+      - HOST=${DEV_DB_HOST}
+      - USER=${DEV_DB_USER}
+      - PASSWORD=${DEV_DB_PASSWORD}
       - PROXY_MODE=True
       - WEB_BASE_URL=${WEB_BASE_URL}
       - LIST_DB=False
@@ -46,12 +46,12 @@ services:
         /entrypoint.sh odoo
   db-dev:
     image: ${DB_IMAGE:-postgres:15}
-    container_name: ${DB_CONTAINER_NAME:-odoo_db_dev}
+    container_name: ${DEV_DB_CONTAINER_NAME:-odoo_db_dev}
     restart: unless-stopped
     environment:
-      - POSTGRES_DB=${DB_NAME}
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DEV_DB_NAME}
+      - POSTGRES_USER=${DEV_DB_USER}
+      - POSTGRES_PASSWORD=${DEV_DB_PASSWORD}
     volumes:
       - db_data_dev:/var/lib/postgresql/data
     networks:
