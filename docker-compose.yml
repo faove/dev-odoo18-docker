@@ -4,8 +4,7 @@ services:
     container_name: ${ODOO_CONTAINER_NAME:-elantar_odoo_dev}
     depends_on:
       - db-dev
-    ports:
-      - "${ODOO_PORT:-8070}:8069"
+
     environment:
       - HOST=${DEV_DB_HOST}
       - USER=${DEV_DB_USER}
