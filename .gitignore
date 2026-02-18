@@ -1,0 +1,22 @@
+# Docker & Environment
+.env
+docker-compose.override.yml
+
+# n8n & Ollama
+n8n/
+ollama/
+
+# Python/Odoo
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+*.swp
+*.sublime-*
+.idea/
+.vscode/
+
+# Odoo Data (if local)
+data/
+filestore/
+sessions/

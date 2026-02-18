@@ -1,36 +1,59 @@
-version: "3.9"
-
 services:
-  db:
-    image: postgres:15
-    container_name: odoo_db
-    restart: unless-stopped
-    env_file:
-      - .env
-    volumes:
-      - db_data:/var/lib/postgresql/data
-    networks:
-      - elantar_net
-
-  odoo:
-    image: odoo:18.0
-    container_name: odoo18
+  odoo-dev:
+    image: ${ODOO_IMAGE:-odoo:18.0}
+    container_name: ${ODOO_CONTAINER_NAME:-elantar_odoo_dev}
     depends_on:
-      - db
+      - db-dev
     ports:
-      - "8069:8069"
-    env_file:
-      - .env
+      - "${ODOO_PORT:-8070}:8069"
+    environment:
+      - HOST=${DB_HOST}
+      - USER=${DB_USER}
+      - PASSWORD=${DB_PASSWORD}
+      - PROXY_MODE=True
+      - WEB_BASE_URL=${WEB_BASE_URL}
+      - LIST_DB=False
+      - ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/addons,/mnt/extra-addons/oca-addons
     volumes:
-      - odoo_data:/var/lib/odoo
+      - odoo_data_dev:/var/lib/odoo
+      - ./addons:/mnt/extra-addons/addons
+      - ./oca-addons:/mnt/extra-addons/oca-addons
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.odoo_dev.rule=Host(`${SUBDOMAIN}.${DOMAIN}`)"
+      - "traefik.http.routers.odoo_dev.entrypoints=websecure"
+      - "traefik.http.routers.odoo_dev.tls.certresolver=letsencrypt"
+      - "traefik.http.services.odoo_dev.loadbalancer.server.port=8069"
     networks:
-      - elantar_net
+      - ${NETWORK_NAME}
     restart: unless-stopped
-
+    command: 
+      - /bin/bash
+      - -c
+      - |
+        echo "Waiting for Traefik (${TRAEFIK_HOST})..."
+        until timeout 1 bash -c "cat < /dev/null > /dev/tcp/${TRAEFIK_HOST}/80"; do
+          echo "Traefik is not reachable yet. Retrying in 2s..."
+          sleep 2
+        done
+        echo "Traefik is up! Starting Odoo..."
+        /entrypoint.sh odoo
+  db-dev:
+    image: ${DB_IMAGE:-postgres:15}
+    container_name: ${DB_CONTAINER_NAME:-odoo_db_dev}
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - db_data_dev:/var/lib/postgresql/data
+    networks:
+      - ${NETWORK_NAME}
 volumes:
-  db_data:
-  odoo_data:
+  db_data_dev:
+  odoo_data_dev:
 
 networks:
   elantar_net:
-    driver: bridge
+    external: true
